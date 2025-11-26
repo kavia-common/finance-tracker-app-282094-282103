@@ -3,13 +3,21 @@ import os
 
 from src.api.main import app
 
-# Generate OpenAPI after all routers are included by importing app above
-openapi_schema = app.openapi()
 
-# Save schema to interfaces/openapi.json
-output_dir = "interfaces"
-os.makedirs(output_dir, exist_ok=True)
-output_path = os.path.join(output_dir, "openapi.json")
+def _generate():
+    """Generate and write OpenAPI schema to interfaces/openapi.json."""
+    # Generate OpenAPI after all routers are included by importing app above
+    openapi_schema = app.openapi()
 
-with open(output_path, "w") as f:
-    json.dump(openapi_schema, f, indent=2)
+    # Save schema to interfaces/openapi.json
+    output_dir = "interfaces"
+    os.makedirs(output_dir, exist_ok=True)
+    output_path = os.path.join(output_dir, "openapi.json")
+
+    with open(output_path, "w") as f:
+        json.dump(openapi_schema, f, indent=2)
+    print(f"OpenAPI schema written to {output_path}")
+
+
+if __name__ == "__main__":
+    _generate()

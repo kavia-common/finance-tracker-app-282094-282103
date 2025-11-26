@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.core.db import init_db
+from src.core.config import get_settings
 from src.api.routers_auth import router as auth_router
 from src.api.routers_transactions import router as transactions_router
 from src.api.routers_budget import router as budget_router
@@ -19,10 +20,19 @@ app = FastAPI(
     ],
 )
 
-# CORS settings - permissive for now, can be tightened later via env
+# Load settings for CORS configuration
+_settings = get_settings()
+cors_origins_raw = _settings.CORS_ALLOW_ORIGINS or "*"
+allow_origins = (
+    ["*"]
+    if cors_origins_raw.strip() == "*"
+    else [o.strip() for o in cors_origins_raw.split(",") if o.strip()]
+)
+
+# CORS settings from env (default '*')
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allow_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
