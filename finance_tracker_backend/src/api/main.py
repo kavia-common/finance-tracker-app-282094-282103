@@ -2,12 +2,21 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.core.db import init_db
+from src.api.routers_auth import router as auth_router
+from src.api.routers_transactions import router as transactions_router
+from src.api.routers_budget import router as budget_router
 
 # Initialize FastAPI app with basic metadata
 app = FastAPI(
     title="Finance Tracker API",
     description="Backend API for authentication, transactions, and budgeting analytics.",
     version="0.1.0",
+    openapi_tags=[
+        {"name": "Health", "description": "Service health and diagnostics"},
+        {"name": "Auth", "description": "User registration and authentication"},
+        {"name": "Transactions", "description": "CRUD operations for transactions"},
+        {"name": "Budget", "description": "Budget analytics and summaries"},
+    ],
 )
 
 # CORS settings - permissive for now, can be tightened later via env
@@ -30,3 +39,9 @@ def on_startup():
 def health_check():
     """Health check endpoint to verify the API is running."""
     return {"message": "Healthy"}
+
+
+# Include routers
+app.include_router(auth_router)
+app.include_router(transactions_router)
+app.include_router(budget_router)
